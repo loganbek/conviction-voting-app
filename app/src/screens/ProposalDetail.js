@@ -67,11 +67,21 @@ function ProposalDetail({ proposal, onBack, requestToken }) {
     api.withdrawAllFromProposal(id).toPromise()
   }, [api, id])
 
-  const buttonMode = useMemo(() => {
+  const mode = useMemo(() => {
     if (conviction >= threshold) {
-      return { text: 'Execute proposal', action: handleExecute, mode: 'strong' }
+      return 'execute'
     }
     if (didIStaked) {
+      return 'update'
+    }
+    return 'support'
+  }, [conviction, threshold, didIStaked])
+
+  const buttonMode = useMemo(() => {
+    if (mode === 'execute') {
+      return { text: 'Execute proposal', action: handleExecute, mode: 'strong' }
+    }
+    if (mode === 'update') {
       return {
         text: 'Change support',
         action: handleWithdraw,
@@ -83,15 +93,7 @@ function ProposalDetail({ proposal, onBack, requestToken }) {
       action: panelState.requestOpen,
       mode: 'strong',
     }
-  }, [
-    conviction,
-    threshold,
-    didIStaked,
-    handleExecute,
-    handleStake,
-    handleWithdraw,
-    panelState,
-  ])
+  }, [mode, handleExecute, handleStake, handleWithdraw, panelState])
 
   return (
     <div>

@@ -9,6 +9,7 @@ export function getStakesAndThreshold(proposal = {}) {
     requestToken,
     globalParams: { alpha, maxRatio, weight },
   } = appState
+
   const { requestedAmount } = proposal
   const stakes = convictionStakes.filter(
     stake => stake.proposal === parseInt(proposal.id)
@@ -22,6 +23,7 @@ export function getStakesAndThreshold(proposal = {}) {
     maxRatio,
     weight
   )
+
   const max = getMaxConviction(stakeToken.tokenSupply || 0, alpha)
   return { stakes, totalTokensStaked, threshold, max }
 }

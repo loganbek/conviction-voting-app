@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useAragonApi } from '@aragon/api-react'
 import { Timer, Text, Tag, useTheme, useLayout, textStyle } from '@aragon/ui'
+import BN from 'bn.js'
 import LineChart from './ModifiedLineChart'
 import styled from 'styled-components'
 import SummaryBar from './SummaryBar'
@@ -159,7 +160,23 @@ export function ConvictionCountdown({ proposal, shorter }) {
   )
   const conviction = getCurrentConviction(stakes, blockNumber, alpha)
   const minTokensNeeded = getMinNeededStake(threshold, alpha)
-  const neededTokens = parseInt(minTokensNeeded - totalTokensStaked)
+  console.log('tokens ', minTokensNeeded, totalTokensStaked)
+
+  const minTokensNeededBN = new BN(minTokensNeeded.toString())
+  const totalTokensStakedBN = new BN(totalTokensStaked.toString())
+
+  console.log('minTokensNeededBN ', minTokensNeededBN.toString())
+  console.log('totalTokensStaked ', totalTokensStakedBN.toString())
+
+  const subs = minTokensNeededBN.sub(totalTokensStakedBN)
+
+  console.log('RESTA ', subs.toString())
+
+  const neededTokens = formatTokenAmount(subs, tokenDecimals)
+
+  // const neededTokens = parseInt(minTokensNeeded - totalTokensStaked)
+
+  console.log('neededTokens ', neededTokens)
   const time = getRemainingTimeToPass(
     threshold,
     conviction,
@@ -171,6 +188,8 @@ export function ConvictionCountdown({ proposal, shorter }) {
   const MAY_PASS = 1
   const AVAILABLE = 2
   const EXECUTED = 3
+
+  console.log('conviction ', conviction, threshold)
 
   const getView = () =>
     executed
@@ -208,10 +227,7 @@ export function ConvictionCountdown({ proposal, shorter }) {
               <React.Fragment>
                 At least{' '}
                 <Tag>
-                  {`${formatTokenAmount(
-                    neededTokens,
-                    tokenDecimals
-                  )} ${tokenSymbol}`}
+                  {neededTokens} {tokenSymbol}
                 </Tag>{' '}
                 more needed
               </React.Fragment>
