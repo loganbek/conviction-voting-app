@@ -1,4 +1,5 @@
 import { useAragonApi } from '@aragon/api-react'
+import BN from 'bn.js'
 import { calculateThreshold, getMaxConviction } from '../lib/conviction'
 
 export function getStakesAndThreshold(proposal = {}) {
@@ -14,7 +15,11 @@ export function getStakesAndThreshold(proposal = {}) {
   const stakes = convictionStakes.filter(
     stake => stake.proposal === parseInt(proposal.id)
   )
-  const { totalTokensStaked } = [...stakes].pop() || { totalTokensStaked: 0 }
+
+  const { totalTokensStaked } = [...stakes].pop() || {
+    totalTokensStaked: new BN('0'),
+  }
+
   const threshold = calculateThreshold(
     requestedAmount,
     requestToken.amount || 0,

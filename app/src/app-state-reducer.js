@@ -12,7 +12,8 @@ export default function reducer(state) {
     }
   }
 
-  const { proposals, stakeToken } = state
+  const { proposals, stakeToken, convictionStakes } = state
+
   return {
     ...state,
 
@@ -30,5 +31,11 @@ export default function reducer(state) {
         amount: new BN(amount),
       })),
     })),
+    convictionStakes: convictionStakes.map(
+      ({ totalTokensStaked, ...convictionStake }) => ({
+        ...convictionStake,
+        totalTokensStaked: new BN(totalTokensStaked),
+      })
+    ),
   }
 }

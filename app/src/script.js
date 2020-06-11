@@ -333,7 +333,7 @@ function updateConvictionStakes(convictionStakes, returnValues, blockNumber) {
     entity,
     proposal: parseInt(id),
     tokensStaked: parseInt(tokensStaked),
-    totalTokensStaked: parseInt(totalTokensStaked),
+    totalTokensStaked,
     time: blockNumber,
     conviction: parseInt(conviction),
   }

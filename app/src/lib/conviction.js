@@ -27,19 +27,10 @@ export function calculateConviction(timePassed, initConv, amount, alpha) {
  */
 export function getCurrentConviction(stakes, currentTime, alpha) {
   const lastStake = [...stakes].pop()
-  console.log('lastStake ', lastStake)
-  console.log('currentTime ', currentTime)
   if (lastStake) {
     const { time, totalTokensStaked, conviction } = lastStake
     // Calculate from last stake to now
 
-    console.log(
-      'PARAMS ',
-      currentTime - time,
-      conviction,
-      totalTokensStaked,
-      alpha
-    )
     return calculateConviction(
       currentTime - time,
       conviction,
