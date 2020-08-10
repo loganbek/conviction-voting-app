@@ -10,12 +10,12 @@
       {
         "name": "org2",
         "address": "0xae44412a8d4519bf31143372763328f406c99881",
-        "startBlock": "6294595"
+        "startBlock": "6990000"
       },
       {
         "name": "org3",
         "address": "0x989edc2536146a6b9c1bff7c9b2651a4a371c7e2",
-        "startBlock": "6294595"
+        "startBlock": "6990000"
       }
     ],
     "OrganizationFactories": [],

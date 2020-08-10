@@ -17,11 +17,14 @@ import { loadAppConfig } from './helpers'
 // 0xbc5e8545c829b4a2dd66039e0824a32c19e8159e699402865a9e18746f99c390
 // conviction-voting.open.aragonpm.eth
 // 0x589851b3734f6578a92f33bfc26877a1166b95238be1f484deeaac6383d14c38
+// conviction-beta.open.aragonpm.eth
+// 0xe4691f497f5e74daf61612cea2d5a540b095805872218eaa9108aa5fd76779a2
 export function getTemplateForApp(appId: string): string | null {
   log.debug('appid {}', [appId])
   if (
-    appId ==
-    '0xbc5e8545c829b4a2dd66039e0824a32c19e8159e699402865a9e18746f99c390' || appId == '0x5fC34dB0475e309698d3Fc9Be9EE2442283eB509'
+    appId == '0xbc5e8545c829b4a2dd66039e0824a32c19e8159e699402865a9e18746f99c390' || 
+    appId == '0x5fC34dB0475e309698d3Fc9Be9EE2442283eB509' || 
+    appId == '0xe4691f497f5e74daf61612cea2d5a540b095805872218eaa9108aa5fd76779a2'
   ) {
     return 'ConvictionVoting'
   } else {
