@@ -1,7 +1,11 @@
 const { getInstalledApp } = require('@aragon/contract-helpers-test/src/aragon-os')
+const { bigExp, ZERO_ADDRESS } = require('@aragon/contract-helpers-test')
 
-module.exports = async (options = {}) => {
+const FEE_TOKEN_BALANCE = bigExp(100, 18)
+
+module.exports = async (artifacts, options = {}) => {
   const agreement = await installAgreement(options)
+  options = await createFeeToken(artifacts, options)
   await activateVoting(agreement, options)
   return { ...options, agreement: { ...options.agreement, proxy: agreement}}
 }
@@ -23,6 +27,15 @@ async function installAgreement(options) {
   await agreement.initialize(title, content, arbitrator.address, aragonAppFeesCashier.address, stakingFactory.address)
   console.log(`Agreement proxy: ${agreement.address}`)
   return agreement
+}
+
+const createFeeToken = async (artifacts, options) => {
+  const { owner } = options
+
+  const feeToken = await artifacts.require('MiniMeToken').new(ZERO_ADDRESS, ZERO_ADDRESS, 0, 'Fee Token', 18, 'FTN', true)
+  await feeToken.generateTokens(owner, FEE_TOKEN_BALANCE)
+
+  return { ...options, feeToken }
 }
 
 async function activateVoting(agreement, options) {

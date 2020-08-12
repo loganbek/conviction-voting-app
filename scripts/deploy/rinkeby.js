@@ -7,7 +7,9 @@ const createDao = require('./src/create-dao')
 const installApps = require('./src/install-apps')
 const installConvictionVoting = require('./src/install-conviction-voting')
 const installAgreements = require('./src/install-agreements')
+const Arapp = require("../../arapp.json")
 
+const RINKEBY_ENS_REGISTRY_ADDRESS = Arapp.environments.rinkeby.registry
 const ONE_HUNDRED_PERCENT = 1e18
 
 const config = {
@@ -57,10 +59,11 @@ async function deploy() {
   options = await installConvictionVoting(artifacts, options)
   options = await installAgreements(options)
 
-  // await createActions(options)
+  await createActions(options)
 }
 
 async function loadConfig(config) {
+
   const options = config
 
   options.owner = await getSender()
@@ -104,12 +107,11 @@ async function getInstance(contract, address) {
   return artifacts.require(contract).at(address)
 }
 
-module.exports = async () => {
+module.exports = async (callback) => {
   try {
     await deploy()
   } catch (error) {
     console.log(error)
-  } finally {
-    system.exit()
   }
+  callback()
 }
