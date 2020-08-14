@@ -5,7 +5,7 @@ const FEE_TOKEN_BALANCE = bigExp(100, 18)
 
 module.exports = async (artifacts, options = {}) => {
   const agreement = await installAgreement(options)
-  options = await createFeeToken(artifacts, options)
+  // options = await createFeeToken(artifacts, options)
   await activateVoting(agreement, options)
   return { ...options, agreement: { ...options.agreement, proxy: agreement}}
 }
@@ -29,14 +29,14 @@ async function installAgreement(options) {
   return agreement
 }
 
-const createFeeToken = async (artifacts, options) => {
-  const { owner } = options
-
-  const feeToken = await artifacts.require('MiniMeToken').new(ZERO_ADDRESS, ZERO_ADDRESS, 0, 'Fee Token', 18, 'FTN', true)
-  await feeToken.generateTokens(owner, FEE_TOKEN_BALANCE)
-
-  return { ...options, feeToken }
-}
+// const createFeeToken = async (artifacts, options) => {
+//   const { owner } = options
+//
+//   const feeToken = await artifacts.require('MiniMeToken').new(ZERO_ADDRESS, ZERO_ADDRESS, 0, 'Fee Token', 18, 'FTN', true)
+//   await feeToken.generateTokens(owner, FEE_TOKEN_BALANCE)
+//
+//   return { ...options, feeToken }
+// }
 
 async function activateVoting(agreement, options) {
   const { owner, acl, feeToken, convictionVoting: { proxy, actionCollateral, challengeCollateral, challengeDuration } } = options

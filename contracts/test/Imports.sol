@@ -8,6 +8,7 @@ import "@aragon/os/contracts/factory/EVMScriptRegistryFactory.sol";
 import "@aragon/staking/contracts/StakingFactory.sol";
 import "@aragon/apps-agreement/contracts/test/mocks/AgreementMock.sol";
 import "@aragon/apps-agreement/contracts/test/mocks/disputable/ArbitratorMock.sol";
+import "@aragon/apps-agreement/contracts/Agreement.sol";
 
 import "@1hive/apps-token-manager/contracts/HookedTokenManager.sol";
 

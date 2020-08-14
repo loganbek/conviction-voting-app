@@ -1,5 +1,5 @@
 const { utf8ToHex } = require('web3-utils')
-const { bn, ONE_DAY } = require('@aragon/contract-helpers-test')
+const { injectWeb3, injectArtifacts, bn, ONE_DAY } = require('@aragon/contract-helpers-test')
 
 const { hash } = require('eth-ens-namehash')
 const createActions = require('./src/create-actions')
@@ -21,12 +21,12 @@ const config = {
   hookedTmBase:           '0x2467333f97da713663682Ac4FBB225D6D49931BE', // Can be ''
 
   // To create new DAO set all of the below app/proxy addresses to ''
-  dao:                    '0x1925BF8f53327902d8aCbcf1821829Bc30b38CbE', // Can be ''
+  dao:                    '0xde5d2afff93dceff29e145c3f1eea21d2cf2afa1', // Can be ''
   vault:                  '0xfA35bD0309AC260fC7eeF003b65d7813B252D699', // Can be ''
   hookedTm:               '0x32D99E0ADC1e77C81592BeCaC6E01CF250E9EFc1', // Can be ''
   convictionVoting: {
     base:                 '0x67034E5020F9fbf9FF9aa87255B97457A5670eee', // Can be ''
-    proxy:                '0x1Bc05ae71cF4ED62E23C4bDB9f69d1a180Eeabde', // Can be ''
+    proxy:                '0xe8822e320692792d1fff9a5e288bdca6a7c98146', // Can be ''
     appId:                hash('disputable-conviction-voting.open.aragonpm.eth'),
     stakeToken:           '0xe612008fE3a2df8C5c01c069676CD4230016F15a', // Can be ''
     requestToken:         '0x2C82eAB07a48CC425c95Dba0252f80cf27A0F0A4', // Can be ''
@@ -45,7 +45,7 @@ const config = {
   feeToken:       '0x3af6b2f907f0c55f279e0ed65751984e6cdc4a42',   // DAI mock token used in Aragon Court staging
   agreement: {
     base:         '0xAC7bA031E2A598A01d823aa96fB25b6662721de6',    // Agreement base v4.0.0
-    proxy:        '0x5762eF64e1552212fE58570EEC6D4cE7A979619e',    // Can be ''
+    proxy:        '0xc2d5d062fC6124ea342F474cb3486072e081848d',    // Can be ''
     appId:        '0x34c62f3aec3073826f39c2c35e9a1297d9dbf3cc77472283106f09eee9cf47bf',
     title:        'Agreement Test v3',
     content:      utf8ToHex('ipfs:QmdLu3XXT9uUYxqDKXXsTYG77qNYNPbhzL27ZYT9kErqcZ')
@@ -57,7 +57,7 @@ async function deploy() {
   options = await createDao(artifacts, options)
   options = await installApps(artifacts, options)
   options = await installConvictionVoting(artifacts, options)
-  options = await installAgreements(options)
+  options = await installAgreements(artifacts, options)
 
   await createActions(options)
 }
@@ -100,7 +100,7 @@ async function getSender() {
 }
 
 const instanceOrEmpty = async (address, contractType) => {
-  return address ? await getInstance(contractType, address) : ""
+  return address ? await getInstance(contractType, address) : ''
 }
 
 async function getInstance(contract, address) {
@@ -108,6 +108,8 @@ async function getInstance(contract, address) {
 }
 
 module.exports = async (callback) => {
+  injectWeb3(web3)
+  injectArtifacts(artifacts)
   try {
     await deploy()
   } catch (error) {
