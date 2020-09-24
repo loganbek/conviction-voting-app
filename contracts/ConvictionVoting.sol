@@ -368,10 +368,12 @@ contract ConvictionVoting is AragonApp, TokenManagerHook {
             return true; // Do nothing on token mintings
         }
 
+
         uint256 newBalance = stakeToken.balanceOf(_from).sub(_amount);
         if (newBalance < totalVoterStake[_from]) {
             _withdrawInactiveStakedTokens(totalVoterStake[_from].sub(newBalance), _from);
         }
+
 
         if (newBalance < totalVoterStake[_from]) {
             _withdrawActiveStakedTokens(totalVoterStake[_from].sub(newBalance), _from);

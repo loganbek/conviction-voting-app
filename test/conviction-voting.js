@@ -40,7 +40,7 @@ function calculateThreshold(requested, funds, supply, alpha, beta, rho) {
   }
 }
 
-contract('ConvictionVoting', ([appManager, user, beneficiary]) => {
+contract('ConvictionVoting', ([appManager, user, beneficiary, user1, user2, user3]) => {
   let convictionVoting, stakeTokenManager, stakeToken, requestToken, vault, dao, acl
   const requestedAmount = 1000
 
@@ -501,6 +501,34 @@ contract('ConvictionVoting', ([appManager, user, beneficiary]) => {
         })
 
         context('onTransfer(from, to, amount)', () => {
+
+          it.only('cannot stake multiple times with multiples accounts sending between', async () => {
+
+            const tokens = DEFAULT_APP_MANAGER_STAKE_TOKENS * 4
+            await stakeTokenManager.mint(user1, tokens)
+            await printDetails(user1)
+
+            await convictionVoting.stakeToProposal(proposalId, DEFAULT_APP_MANAGER_STAKE_TOKENS, {from: user1})
+            await printDetails(user1)
+
+            await stakeToken.transfer(user2, DEFAULT_APP_MANAGER_STAKE_TOKENS, { from: user1 })
+            await printDetails(user1)
+            await convictionVoting.stakeToProposal(proposalId, DEFAULT_APP_MANAGER_STAKE_TOKENS, { from: user2 })
+            await printDetails(user2)
+
+            await stakeTokenManager.mint(user2, tokens)
+            await stakeToken.transfer(user3, DEFAULT_APP_MANAGER_STAKE_TOKENS, { from: user2 })
+            await printDetails(user2)
+            await convictionVoting.stakeToProposal(proposalId, DEFAULT_APP_MANAGER_STAKE_TOKENS, { from: user3 })
+            await printDetails(user3)
+          })
+
+          const printDetails = async (user) => {
+            const { stakedTokens } = await convictionVoting.getProposal(proposalId)
+            const totalVoterStake = await convictionVoting.getTotalVoterStake(user)
+            console.log("User", user, "Staked Tokens: ", stakedTokens.toNumber(), "Total voter stake: ", totalVoterStake.toNumber())
+          }
+
           it('unstakes staked tokens when transferring more than currently unstaked', async () => {
             const transferAmount = 5000
             await convictionVoting.stakeToProposal(proposalId, DEFAULT_APP_MANAGER_STAKE_TOKENS)
