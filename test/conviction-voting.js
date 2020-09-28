@@ -70,7 +70,7 @@ contract('ConvictionVoting', ([appManager, user, beneficiary, user1, user2, user
 
     convictionVoting = await installApp(dao, acl, ConvictionVoting, [[ANY_ADDRESS, 'CREATE_PROPOSALS_ROLE']], appManager)
     await convictionVoting.initialize(stakeToken.address, vault.address, requestToken.address, alpha, beta, rho, MIN_THRESHOLD_STAKE_PERCENTAGE) // alpha = 0.9, beta = 0.2, rho = 0.002
-    await stakeTokenManager.registerHook(convictionVoting.address)
+    // await stakeTokenManager.registerHook(convictionVoting.address)
   }
 
   context('_onRegisterAsHook(tokenManager, hookId, token)', () => {
@@ -502,32 +502,31 @@ contract('ConvictionVoting', ([appManager, user, beneficiary, user1, user2, user
 
         context('onTransfer(from, to, amount)', () => {
 
-          it.only('cannot stake multiple times with multiples accounts sending between', async () => {
-
-            const tokens = DEFAULT_APP_MANAGER_STAKE_TOKENS * 4
-            await stakeTokenManager.mint(user1, tokens)
-            await printDetails(user1)
-
-            await convictionVoting.stakeToProposal(proposalId, DEFAULT_APP_MANAGER_STAKE_TOKENS, {from: user1})
-            await printDetails(user1)
-
-            await stakeToken.transfer(user2, DEFAULT_APP_MANAGER_STAKE_TOKENS, { from: user1 })
-            await printDetails(user1)
-            await convictionVoting.stakeToProposal(proposalId, DEFAULT_APP_MANAGER_STAKE_TOKENS, { from: user2 })
-            await printDetails(user2)
-
-            await stakeTokenManager.mint(user2, tokens)
-            await stakeToken.transfer(user3, DEFAULT_APP_MANAGER_STAKE_TOKENS, { from: user2 })
-            await printDetails(user2)
-            await convictionVoting.stakeToProposal(proposalId, DEFAULT_APP_MANAGER_STAKE_TOKENS, { from: user3 })
-            await printDetails(user3)
-          })
-
-          const printDetails = async (user) => {
-            const { stakedTokens } = await convictionVoting.getProposal(proposalId)
-            const totalVoterStake = await convictionVoting.getTotalVoterStake(user)
-            console.log("User", user, "Staked Tokens: ", stakedTokens.toNumber(), "Total voter stake: ", totalVoterStake.toNumber())
-          }
+          // it.only('cannot stake multiple times with multiples accounts sending between', async () => {
+          //
+          //   const tokens = 30000
+          //   await stakeTokenManager.mint(user1, tokens)
+          //   await printDetails(user1)
+          //
+          //   await convictionVoting.stakeToProposal(proposalId, tokens, {from: user1})
+          //   await printDetails(user1)
+          //
+          //   await stakeToken.transfer(user2, tokens, { from: user1 })
+          //   await printDetails(user1)
+          //   await convictionVoting.stakeToProposal(proposalId, tokens, { from: user2 })
+          //   await printDetails(user2)
+          //
+          //   await stakeToken.transfer(user3, tokens, { from: user2 })
+          //   await printDetails(user2)
+          //   await convictionVoting.stakeToProposal(proposalId, tokens, { from: user3 })
+          //   await printDetails(user3)
+          // })
+          //
+          // const printDetails = async (user) => {
+          //   const { stakedTokens } = await convictionVoting.getProposal(proposalId)
+          //   const totalVoterStake = await convictionVoting.getTotalVoterStake(user)
+          //   console.log("User", user, "Staked Tokens: ", stakedTokens.toNumber(), "Total voter stake: ", totalVoterStake.toNumber())
+          // }
 
           it('unstakes staked tokens when transferring more than currently unstaked', async () => {
             const transferAmount = 5000

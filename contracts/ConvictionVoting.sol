@@ -40,6 +40,7 @@ contract ConvictionVoting is AragonApp, TokenManagerHook {
     string private constant ERROR_STAKING_MORE_THAN_AVAILABLE = "CV_STAKING_MORE_THAN_AVAILABLE";
     string private constant ERROR_MAX_PROPOSALS_REACHED = "CV_MAX_PROPOSALS_REACHED";
     string private constant ERROR_WITHDRAW_MORE_THAN_STAKED = "CV_WITHDRAW_MORE_THAN_STAKED";
+    string private constant ERROR_TM_HOOK_NOT_REGISTERED = "CV_TM_HOOK_NOT_REGISTERED";
 
     enum ProposalStatus {
         Active,              // A vote that has been reported to Agreements
@@ -368,13 +369,11 @@ contract ConvictionVoting is AragonApp, TokenManagerHook {
             return true; // Do nothing on token mintings
         }
 
-
         uint256 newBalance = stakeToken.balanceOf(_from).sub(_amount);
         if (newBalance < totalVoterStake[_from]) {
             _withdrawInactiveStakedTokens(totalVoterStake[_from].sub(newBalance), _from);
         }
-
-
+        // Note that the above function updates totalVoterStake so we must recheck it below and not store it in a variable
         if (newBalance < totalVoterStake[_from]) {
             _withdrawActiveStakedTokens(totalVoterStake[_from].sub(newBalance), _from);
         }
@@ -446,6 +445,7 @@ contract ConvictionVoting is AragonApp, TokenManagerHook {
      * @param _from Account from which we stake
      */
     function _stake(uint256 _proposalId, uint256 _amount, address _from) internal proposalExists(_proposalId) {
+        require(getTokenManager() != address(0), ERROR_TM_HOOK_NOT_REGISTERED);
         Proposal storage proposal = proposals[_proposalId];
         require(_amount > 0, ERROR_AMOUNT_CAN_NOT_BE_ZERO);
         require(proposal.proposalStatus == ProposalStatus.Active, ERROR_PROPOSAL_NOT_ACTIVE);
@@ -515,7 +515,6 @@ contract ConvictionVoting is AragonApp, TokenManagerHook {
      * @param _from Account to withdraw from
      */
     function _withdrawActiveStakedTokens(uint256 _targetAmount, address _from) internal {
-        uint256 i = 0;
         uint256 toWithdraw;
         uint256 withdrawnAmount = 0;
         uint256[] memory voterStakedProposalsCopy = voterStakedProposals[_from];
@@ -530,6 +529,7 @@ contract ConvictionVoting is AragonApp, TokenManagerHook {
 
         // We reset this variable as _withdrawFromProposal can update voterStakedProposals
         voterStakedProposalsCopy = voterStakedProposals[_from];
+        uint256 i = 0;
 
         while (i < voterStakedProposalsCopy.length && withdrawnAmount < _targetAmount) {
             uint256 proposalId = voterStakedProposalsCopy[i];
